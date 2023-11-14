@@ -8,12 +8,15 @@ import java.util.ArrayList;
 
 public class Student {
     private String name;
+    private String carnet;
+
     private ArrayList<String> curses;
     private ArrayList<String> grades;
     private double avage;
 
-    public Student(String name, ArrayList<String> curses, ArrayList<String> grades, double avage) {
+    public Student(String name, String carnet, ArrayList<String> curses, ArrayList<String> grades, double avage) {
         this.name = name;
+        this.carnet = carnet;
         this.curses = curses;
         this.grades = grades;
         this.avage = avage;
@@ -49,5 +52,13 @@ public class Student {
 
     public void setAvage(double avage) {
         this.avage = avage;
+    }
+
+    public String getCarnet() {
+        return carnet;
+    }
+
+    public void setCarnet(String carnet) {
+        this.carnet = carnet;
     }
 }

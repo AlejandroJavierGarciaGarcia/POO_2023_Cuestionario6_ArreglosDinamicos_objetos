@@ -16,6 +16,8 @@ public class ConsoleUI {
 
     private Scanner in = new Scanner(System.in);
     private ValidationController validations = new ValidationController();
+
+    private StudentController studentController = new StudentController();
     /**
      * Runs the console application.
      */
@@ -42,17 +44,19 @@ public class ConsoleUI {
             try {
                 System.out.println("\nMENÚ PRINCIPAL:");
                 System.out.println("Elija su opción de su interés:");
-                System.out.println(" 1. Agregar usuario");
+                System.out.println(" 1. Agregar estudiante");
                 System.out.println(" 2. Estadisticas");
-                System.out.println(" 7. Salir");
+                System.out.println(" 3. Salir");
 
                 String op = in.nextLine();
                 switch (op) {
                     case "1":
                         System.out.println("\n*AGREGAR USUARIO*");
                         registerUser(in);
+                        break;
                     case "2":
                         System.out.println("\n*ESTADÍSTICA* ");
+                        studentController.statistics();
                         break;
 
                     case "3":
@@ -64,7 +68,6 @@ public class ConsoleUI {
                 }
             } catch (Exception e) {
                 System.out.println(" Información del proceso: " + e.getMessage());
-                e.printStackTrace();
             }
         }while (!isValid);    }
 
@@ -75,7 +78,19 @@ public class ConsoleUI {
      */
     private void registerUser(Scanner in){
         try {
+            // INGRESO DEL CARNET
             boolean isValid = false;
+            String carnet;
+            do {
+                System.out.println("\n  ⮞ Ingrese el carnet del estudiante:");
+                carnet = in.nextLine();
+                isValid = validations.checkInteger(carnet);
+                if (isValid) {
+                    isValid = studentController.isCarnetRegister(carnet);
+                }
+            } while (!isValid);
+
+             isValid = false;
             String name;
             // INGRESO DEL NOMBRE
             do {
@@ -97,13 +112,14 @@ public class ConsoleUI {
             } while (!isValid);
             ArrayList<String> cursesToAdd = new ArrayList<String>();
             ArrayList<String> gradesToAdd = new ArrayList<String>();
-
-            for (int i=0;i<Integer.parseInt(totalCurses);i++){
+            int subTotalGadres = 0;
+            for (int i=1;i<=Integer.parseInt(totalCurses);i++){
                 // INGRESO DEL CURSO
                 isValid = false;
 
                 String curse;
                 do {
+                    System.out.println("\n- - - - - - - - - - - - - - - - - - - - - - - \nCURSO #"+i);
                     System.out.println("\n  ⮞ Ingrese nombre del curso:");
                     curse = in.nextLine();
                     isValid = validations.notEmpty(curse);
@@ -118,19 +134,23 @@ public class ConsoleUI {
                     System.out.println("\n  ⮞ Ingrese la calificacion:");
                     grades = in.nextLine();
                     isValid = validations.checkInteger(grades);
-                    if(Integer.parseInt(grades)<0&&Integer.parseInt(grades)>100){
-                        System.out.println(" * La calificación debe ser un número entre 0 y 100");
-                        isValid=false;
-                    }else {
-                        isValid = true;
+                    if(isValid){
+                        if(Integer.parseInt(grades)<0&&Integer.parseInt(grades)>100){
+                            System.out.println(" * La calificación debe ser un número entre 0 y 100");
+                            isValid=false;
+                        }else {
+                            isValid = true;
+                        }
                     }
+
                 } while (!isValid);
+                subTotalGadres = Integer.parseInt(subTotalGadres +grades);
                 cursesToAdd.add(curse);
-                cursesToAdd.add(grades);
+                gradesToAdd.add(grades);
             }
 
             try{
-                Student newStudent = new Student(name,cursesToAdd,gradesToAdd,0);
+                Student newStudent = new Student(name,carnet,cursesToAdd,gradesToAdd,subTotalGadres/Integer.parseInt(totalCurses));
                 StudentController.currentStudents.add(newStudent);
             }catch (Exception e){
                 System.out.println(" * Proceso interrumpido, vuelva a intentarlo");
